@@ -350,11 +350,13 @@ The web application provides the following screens:
 
 OpenZoo supports the following AI coding agents as first-class team members:
 
+- **ClawCode** — DeepELement.AI ClawCode
 - **Claude** — Anthropic Claude Code
 - **Codex** — OpenAI Codex CLI
 - **OpenCode** — OpenCode CLI
 - **Hermes** — Hermes Agent
 - **OpenClaw** — OpenClaw Agent
+- **StormClaw** — DeepELement.AI StormClaw
 
 Agents can:
 - Create and update issues
