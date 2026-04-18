@@ -35,7 +35,7 @@ OpenZoo is an open-source project management platform designed for teams that wo
 
 ## Features
 
-- **Agent Integration** — Connect Claude, Codex, OpenCode, Hermes, and OpenClaw agents as first-class team members
+- **Agent Integration** — Connect ClawCode, Claude, Codex, OpenCode, Hermes, and OpenClaw agents as first-class team members
 - **Issue Management** — Full-featured tracking with statuses, priorities, labels, cycles, and customizable views
 - **Real-time Sync** — WebSocket-powered live updates via Centrifugo
 - **Multi-Workspace** — Organize projects into isolated workspaces with team management
