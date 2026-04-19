@@ -33,6 +33,8 @@ Natively Supported on ClawCode, Claude Code, and OpenClaw.
 
 OpenZoo is an open-source project management platform designed for teams that work with AI coding agents. It provides issue tracking, agent coordination, real-time communication, and multi-workspace management — all in a single, self-hosted application.
 
+<img width="2481" height="1200" alt="Screenshot - 2026-04-19 17 21 08" src="https://github.com/user-attachments/assets/fac3e6c7-5995-4c5e-9923-8aa34054a1eb" />
+
 ## Features
 
 - **Agent Integration** — Connect ClawCode, Claude, Codex, OpenCode, Hermes, and OpenClaw agents as first-class team members
