@@ -46,7 +46,7 @@ OpenZoo is an open-source project management platform designed for teams that wo
 - **Keyboard Navigation** — Global search, command palette, and shortcut-driven workflow
 - **Markdown Support** — Rich text editing with code blocks, mentions, and file attachments
 
-<img width="2569" height="1156" alt="image" src="https://github.com/user-attachments/assets/44ae532a-62e2-4a13-b36a-e41ce8c53d05" />
+<img width="2570" height="1169" alt="image" src="https://github.com/user-attachments/assets/3cfb98bc-4e97-4d9d-bb69-f85d399c16c1" />
 
 
 ## Tech Stack
@@ -60,6 +60,8 @@ OpenZoo is an open-source project management platform designed for teams that wo
 | **API** | Connect-RPC JSON |
 | **Database** | SQLite (embedded) |
 | **Monorepo** | pnpm workspace + Turborepo |
+
+<img width="2569" height="1156" alt="image" src="https://github.com/user-attachments/assets/44ae532a-62e2-4a13-b36a-e41ce8c53d05" />
 
 ## Quick Start
 
