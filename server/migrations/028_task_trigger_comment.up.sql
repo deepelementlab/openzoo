@@ -1,0 +1,1 @@
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS trigger_comment_id TEXT REFERENCES comments(id) ON DELETE SET NULL;

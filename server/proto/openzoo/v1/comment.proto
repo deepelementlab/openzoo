@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+
+// ── Comment ──────────────────────────────────────
+
+enum CommentType {
+  COMMENT_TYPE_UNSPECIFIED = 0;
+  COMMENT_TYPE_COMMENT = 1;
+  COMMENT_TYPE_STATUS_CHANGE = 2;
+  COMMENT_TYPE_PROGRESS_UPDATE = 3;
+  COMMENT_TYPE_SYSTEM = 4;
+}
+
+message Reaction {
+  string id = 1;
+  string comment_id = 2;
+  string actor_type = 3;
+  string actor_id = 4;
+  string emoji = 5;
+  int64 created_at = 6;
+}
+
+message Attachment {
+  string id = 1;
+  string workspace_id = 2;
+  string issue_id = 3;
+  string comment_id = 4;
+  string uploader_type = 5;
+  string uploader_id = 6;
+  string filename = 7;
+  string url = 8;
+  string download_url = 9;
+  string content_type = 10;
+  int64 size_bytes = 11;
+  int64 created_at = 12;
+}
+
+message Comment {
+  string id = 1;
+  string issue_id = 2;
+  string author_type = 3;
+  string author_id = 4;
+  string content = 5;
+  CommentType type = 6;
+  string parent_id = 7;
+  repeated Reaction reactions = 8;
+  repeated Attachment attachments = 9;
+  int64 created_at = 10;
+  int64 updated_at = 11;
+}
+
+// ── Comment CRUD ─────────────────────────────────
+
+message ListCommentsRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListCommentsResponse {
+  repeated Comment comments = 1;
+}
+
+message CreateCommentRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  string content = 3;
+  string parent_id = 4;
+  repeated string attachment_ids = 5;
+}
+
+message UpdateCommentRequest {
+  string workspace_id = 1;
+  string comment_id = 2;
+  string content = 3;
+}
+
+message DeleteCommentRequest {
+  string workspace_id = 1;
+  string comment_id = 2;
+}
+
+// ── Comment Reactions ────────────────────────────
+
+message AddReactionRequest {
+  string workspace_id = 1;
+  string comment_id = 2;
+  string emoji = 3;
+}
+
+message RemoveReactionRequest {
+  string workspace_id = 1;
+  string comment_id = 2;
+  string emoji = 3;
+}
+
+// ── Timeline / Activity ──────────────────────────
+
+message TimelineEntry {
+  string type = 1;
+  string id = 2;
+  string actor_type = 3;
+  string actor_id = 4;
+  int64 created_at = 5;
+  string action = 6;
+  string details_json = 7;
+  Comment comment = 8;
+}
+
+message ListTimelineRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListTimelineResponse {
+  repeated TimelineEntry entries = 1;
+}
+
+// ── Attachments ──────────────────────────────────
+
+message UploadAttachmentRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  string filename = 3;
+  string content_type = 4;
+  bytes data = 5;
+}
+
+message DeleteAttachmentRequest {
+  string workspace_id = 1;
+  string attachment_id = 2;
+}
+
+// ── Service ──────────────────────────────────────
+
+service CommentService {
+  rpc ListComments(ListCommentsRequest) returns (ListCommentsResponse);
+  rpc CreateComment(CreateCommentRequest) returns (Comment);
+  rpc UpdateComment(UpdateCommentRequest) returns (Comment);
+  rpc DeleteComment(DeleteCommentRequest) returns (Empty);
+  rpc AddReaction(AddReactionRequest) returns (Reaction);
+  rpc RemoveReaction(RemoveReactionRequest) returns (Empty);
+  rpc ListTimeline(ListTimelineRequest) returns (ListTimelineResponse);
+  rpc UploadAttachment(UploadAttachmentRequest) returns (Attachment);
+  rpc DeleteAttachment(DeleteAttachmentRequest) returns (Empty);
+}

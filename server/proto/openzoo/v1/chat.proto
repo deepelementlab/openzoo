@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+
+// ── Chat ─────────────────────────────────────────
+
+enum ChatSessionStatus {
+  CHAT_SESSION_STATUS_UNSPECIFIED = 0;
+  CHAT_SESSION_STATUS_ACTIVE = 1;
+  CHAT_SESSION_STATUS_ARCHIVED = 2;
+}
+
+message ChatSession {
+  string id = 1;
+  string workspace_id = 2;
+  string agent_id = 3;
+  string creator_id = 4;
+  string title = 5;
+  ChatSessionStatus status = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+}
+
+message ChatMessage {
+  string id = 1;
+  string chat_session_id = 2;
+  string role = 3;  // user | assistant
+  string content = 4;
+  string task_id = 5;
+  int64 created_at = 6;
+}
+
+// ── Chat CRUD ────────────────────────────────────
+
+message ListChatSessionsRequest {
+  string workspace_id = 1;
+  string agent_id = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListChatSessionsResponse { repeated ChatSession sessions = 1; }
+
+message GetChatSessionRequest { string workspace_id = 1; string session_id = 2; }
+
+message CreateChatSessionRequest {
+  string workspace_id = 1;
+  string agent_id = 2;
+  string title = 3;
+}
+
+message ArchiveChatSessionRequest { string workspace_id = 1; string session_id = 2; }
+
+message ListChatMessagesRequest {
+  string workspace_id = 1;
+  string session_id = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListChatMessagesResponse { repeated ChatMessage messages = 1; }
+
+message SendChatMessageRequest {
+  string workspace_id = 1;
+  string session_id = 2;
+  string content = 3;
+}
+
+message SendChatMessageResponse {
+  string message_id = 1;
+  string task_id = 2;
+}
+
+// ── Service ──────────────────────────────────────
+
+service ChatService {
+  rpc ListChatSessions(ListChatSessionsRequest) returns (ListChatSessionsResponse);
+  rpc GetChatSession(GetChatSessionRequest) returns (ChatSession);
+  rpc CreateChatSession(CreateChatSessionRequest) returns (ChatSession);
+  rpc ArchiveChatSession(ArchiveChatSessionRequest) returns (ChatSession);
+  rpc ListChatMessages(ListChatMessagesRequest) returns (ListChatMessagesResponse);
+  rpc SendChatMessage(SendChatMessageRequest) returns (SendChatMessageResponse);
+}

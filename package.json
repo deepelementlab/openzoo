@@ -1,0 +1,23 @@
+{
+  "name": "openzoo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev:web": "pnpm --filter @openzoo/web dev",
+    "dev:desktop": "pnpm --filter @openzoo/desktop-tauri dev",
+    "dev:docs": "pnpm --filter @openzoo/docs dev",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "perf:ci": "node ./scripts/perf-baseline.mjs",
+    "gen:proto": "buf generate"
+  },
+  "packageManager": "pnpm@10.28.2",
+  "devDependencies": {
+    "autocannon": "^8.0.0",
+    "turbo": "^2.5.4",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@openzoo/core": ["../../packages/core/src/index.ts"],
+      "@openzoo/core/*": ["../../packages/core/src/*"],
+      "@openzoo/ui": ["../../packages/ui/src/index.ts"],
+      "@openzoo/ui/*": ["../../packages/ui/src/*"],
+      "@openzoo/views": ["../../packages/views/src/index.ts"],
+      "@openzoo/views/*": ["../../packages/views/src/*"]
+    },
+    "types": ["vite/client", "node"]
+  },
+  "include": ["src"]
+}

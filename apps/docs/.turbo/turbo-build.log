@@ -1,0 +1,18 @@
+
+> @openzoo/docs@0.1.0 build D:\opensource_project\opencode-main\opencode-main\tech plugins\multica-main\openzoo\apps\docs
+> vite build
+
+[36mvite v8.0.8 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 1642 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   1.18 kB │ gzip:  0.58 kB
+dist/assets/index-DO3E_MM0.css   15.24 kB │ gzip:  3.72 kB
+dist/assets/index-eHSvdcaj.js   294.85 kB │ gzip: 88.13 kB
+
+[33m[33m[PLUGIN_TIMINGS] Warning:[0m Your build spent significant time in plugins. Here is a breakdown:
+  - rolldown:vite-resolve (72%)
+  - @tailwindcss/vite:generate:build (19%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+[39m
+[32m✓ built in 17.91s[39m

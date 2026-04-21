@@ -1,0 +1,12 @@
+
+> @openzoo/web@0.1.0 test D:\opensource_project\opencode-main\opencode-main\tech plugins\multica-main\openzoo\apps\web-vite
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.4 D:/opensource_project/opencode-main/opencode-main/tech plugins/multica-main/openzoo/apps/web-vite
+
+No test files found, exiting with code 0
+
+include: **/*.{test,spec}.?(c|m)[jt]s?(x)
+exclude:  tests/e2e/**, **/node_modules/**, **/.git/**
+

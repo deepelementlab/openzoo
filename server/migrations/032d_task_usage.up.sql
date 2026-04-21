@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS task_usage (
+    id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+    task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    provider TEXT NOT NULL DEFAULT '',
+    model TEXT NOT NULL,
+    input_tokens BIGINT NOT NULL DEFAULT 0,
+    output_tokens BIGINT NOT NULL DEFAULT 0,
+    cache_read_tokens BIGINT NOT NULL DEFAULT 0,
+    cache_write_tokens BIGINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (task_id, provider, model)
+);
+CREATE INDEX IF NOT EXISTS idx_task_usage_task_id ON task_usage(task_id);

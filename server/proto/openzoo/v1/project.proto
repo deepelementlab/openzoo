@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+
+// ── Project ──────────────────────────────────────
+
+enum ProjectStatus {
+  PROJECT_STATUS_UNSPECIFIED = 0;
+  PROJECT_STATUS_PLANNED = 1;
+  PROJECT_STATUS_IN_PROGRESS = 2;
+  PROJECT_STATUS_PAUSED = 3;
+  PROJECT_STATUS_COMPLETED = 4;
+  PROJECT_STATUS_CANCELLED = 5;
+}
+
+enum ProjectPriority {
+  PROJECT_PRIORITY_UNSPECIFIED = 0;
+  PROJECT_PRIORITY_NONE = 1;
+  PROJECT_PRIORITY_LOW = 2;
+  PROJECT_PRIORITY_MEDIUM = 3;
+  PROJECT_PRIORITY_HIGH = 4;
+  PROJECT_PRIORITY_URGENT = 5;
+}
+
+message Project {
+  string id = 1;
+  string workspace_id = 2;
+  string title = 3;
+  string description = 4;
+  string icon = 5;
+  ProjectStatus status = 6;
+  ProjectPriority priority = 7;
+  string lead_type = 8;
+  string lead_id = 9;
+  int64 created_at = 10;
+  int64 updated_at = 11;
+  int32 issue_count = 12;
+  int32 done_count = 13;
+}
+
+message ListProjectsRequest {
+  string workspace_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message ListProjectsResponse {
+  repeated Project projects = 1;
+  int32 total = 2;
+}
+
+message GetProjectRequest { string workspace_id = 1; string project_id = 2; }
+
+message CreateProjectRequest {
+  string workspace_id = 1;
+  string title = 2;
+  string description = 3;
+  string icon = 4;
+  ProjectStatus status = 5;
+  ProjectPriority priority = 6;
+  string lead_type = 7;
+  string lead_id = 8;
+}
+
+message UpdateProjectRequest {
+  string workspace_id = 1;
+  string project_id = 2;
+  optional string title = 3;
+  optional string description = 4;
+  optional string icon = 5;
+  optional ProjectStatus status = 6;
+  optional ProjectPriority priority = 7;
+  optional string lead_type = 8;
+  optional string lead_id = 9;
+}
+
+message DeleteProjectRequest { string workspace_id = 1; string project_id = 2; }
+
+message SearchProjectsRequest {
+  string workspace_id = 1;
+  string query = 2;
+  int32 limit = 3;
+}
+
+message SearchProjectResult {
+  Project project = 1;
+  string match_source = 2;
+  string matched_snippet = 3;
+}
+
+message SearchProjectsResponse {
+  repeated SearchProjectResult results = 1;
+  int32 total = 2;
+}
+
+// ── Pinned Items ─────────────────────────────────
+
+enum PinnedItemType {
+  PINNED_ITEM_TYPE_UNSPECIFIED = 0;
+  PINNED_ITEM_TYPE_ISSUE = 1;
+  PINNED_ITEM_TYPE_PROJECT = 2;
+}
+
+message PinnedItem {
+  string id = 1;
+  string workspace_id = 2;
+  string user_id = 3;
+  PinnedItemType item_type = 4;
+  string item_id = 5;
+  int32 position = 6;
+  int64 created_at = 7;
+  string title = 8;
+  string identifier = 9;
+  string icon = 10;
+  string status = 11;
+}
+
+message ListPinsRequest { string workspace_id = 1; }
+message ListPinsResponse { repeated PinnedItem items = 1; }
+
+message CreatePinRequest {
+  string workspace_id = 1;
+  PinnedItemType item_type = 2;
+  string item_id = 3;
+}
+
+message DeletePinRequest { string workspace_id = 1; string pin_id = 2; }
+
+message ReorderPinsRequest {
+  string workspace_id = 1;
+  repeated ReorderPinItem items = 2;
+}
+
+message ReorderPinItem {
+  string id = 1;
+  int32 position = 2;
+}
+
+// ── Services ─────────────────────────────────────
+
+service ProjectService {
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+  rpc GetProject(GetProjectRequest) returns (Project);
+  rpc CreateProject(CreateProjectRequest) returns (Project);
+  rpc UpdateProject(UpdateProjectRequest) returns (Project);
+  rpc DeleteProject(DeleteProjectRequest) returns (Empty);
+  rpc SearchProjects(SearchProjectsRequest) returns (SearchProjectsResponse);
+}
+
+service PinService {
+  rpc ListPins(ListPinsRequest) returns (ListPinsResponse);
+  rpc CreatePin(CreatePinRequest) returns (PinnedItem);
+  rpc DeletePin(DeletePinRequest) returns (Empty);
+  rpc ReorderPins(ReorderPinsRequest) returns (Empty);
+}

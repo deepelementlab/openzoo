@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS issue_dependencies CASCADE;
+DROP TABLE IF EXISTS issue_to_label CASCADE;
+DROP TABLE IF EXISTS issue_labels CASCADE;

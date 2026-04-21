@@ -1,0 +1,1 @@
+ALTER TABLE inbox_items ADD COLUMN IF NOT EXISTS details JSONB DEFAULT '{}';

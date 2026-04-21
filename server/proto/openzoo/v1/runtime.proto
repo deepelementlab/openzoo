@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+
+// ── Runtime Device ───────────────────────────────
+
+enum RuntimeMode {
+  RUNTIME_MODE_UNSPECIFIED = 0;
+  RUNTIME_MODE_LOCAL = 1;
+  RUNTIME_MODE_CLOUD = 2;
+}
+
+message RuntimeDevice {
+  string id = 1;
+  string workspace_id = 2;
+  string daemon_id = 3;
+  string name = 4;
+  RuntimeMode runtime_mode = 5;
+  string provider = 6;
+  string status = 7;  // online | offline
+  string device_info = 8;
+  string metadata_json = 9;
+  string owner_id = 10;
+  int64 last_seen_at = 11;
+  int64 created_at = 12;
+  int64 updated_at = 13;
+}
+
+// ── Runtime CRUD ─────────────────────────────────
+
+message ListRuntimesRequest { string workspace_id = 1; }
+message ListRuntimesResponse { repeated RuntimeDevice runtimes = 1; }
+
+message GetRuntimeRequest { string workspace_id = 1; string runtime_id = 2; }
+
+message RegisterRuntimeRequest {
+  string workspace_id = 1;
+  string name = 2;
+  string provider = 3;
+  RuntimeMode runtime_mode = 4;
+  string device_info = 5;
+  string metadata_json = 6;
+}
+
+message UpdateRuntimeRequest {
+  string workspace_id = 1;
+  string runtime_id = 2;
+  optional string name = 3;
+  optional string device_info = 4;
+}
+
+message DeleteRuntimeRequest { string workspace_id = 1; string runtime_id = 2; }
+
+// ── Runtime Ping ─────────────────────────────────
+
+enum PingStatus {
+  PING_STATUS_UNSPECIFIED = 0;
+  PING_STATUS_PENDING = 1;
+  PING_STATUS_RUNNING = 2;
+  PING_STATUS_COMPLETED = 3;
+  PING_STATUS_FAILED = 4;
+  PING_STATUS_TIMEOUT = 5;
+}
+
+message RuntimePing {
+  string id = 1;
+  string runtime_id = 2;
+  PingStatus status = 3;
+  string output = 4;
+  string error = 5;
+  int32 duration_ms = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+}
+
+message PingRuntimeRequest { string workspace_id = 1; string runtime_id = 2; }
+message ListRuntimePingsRequest { string workspace_id = 1; string runtime_id = 2; }
+message ListRuntimePingsResponse { repeated RuntimePing pings = 1; }
+
+// ── Runtime Usage ────────────────────────────────
+
+message RuntimeUsage {
+  string runtime_id = 1;
+  string date = 2;
+  string provider = 3;
+  string model = 4;
+  int64 input_tokens = 5;
+  int64 output_tokens = 6;
+  int64 cache_read_tokens = 7;
+  int64 cache_write_tokens = 8;
+}
+
+message ListRuntimeUsageRequest {
+  string workspace_id = 1;
+  string runtime_id = 2;
+  int32 days = 3;
+}
+
+message ListRuntimeUsageResponse { repeated RuntimeUsage usage = 1; }
+
+message IssueUsageSummary {
+  int64 total_input_tokens = 1;
+  int64 total_output_tokens = 2;
+  int64 total_cache_read_tokens = 3;
+  int64 total_cache_write_tokens = 4;
+  int32 task_count = 5;
+}
+
+message GetIssueUsageRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+}
+
+// ── Runtime Hourly Activity ──────────────────────
+
+message RuntimeHourlyActivity {
+  int32 hour = 1;
+  int32 count = 2;
+}
+
+message ListRuntimeHourlyActivityRequest {
+  string workspace_id = 1;
+  string runtime_id = 2;
+}
+
+message ListRuntimeHourlyActivityResponse {
+  repeated RuntimeHourlyActivity activities = 1;
+}
+
+// ── Runtime Update ───────────────────────────────
+
+enum UpdateStatus {
+  UPDATE_STATUS_UNSPECIFIED = 0;
+  UPDATE_STATUS_PENDING = 1;
+  UPDATE_STATUS_RUNNING = 2;
+  UPDATE_STATUS_COMPLETED = 3;
+  UPDATE_STATUS_FAILED = 4;
+  UPDATE_STATUS_TIMEOUT = 5;
+}
+
+message RuntimeUpdate {
+  string id = 1;
+  string runtime_id = 2;
+  UpdateStatus status = 3;
+  string target_version = 4;
+  string output = 5;
+  string error = 6;
+  int64 created_at = 7;
+  int64 updated_at = 8;
+}
+
+message TriggerRuntimeUpdateRequest {
+  string workspace_id = 1;
+  string runtime_id = 2;
+  string target_version = 3;
+}
+
+// ── Daemon ───────────────────────────────────────
+
+message RegisterDaemonRequest {
+  string workspace_id = 1;
+  string name = 2;
+  string hostname = 3;
+}
+
+message RegisterDaemonResponse {
+  string daemon_id = 1;
+  string token = 2;
+}
+
+message DaemonHeartbeatRequest {
+  string daemon_id = 1;
+  string status_json = 2;
+}
+
+// ── Service ──────────────────────────────────────
+
+service RuntimeService {
+  rpc ListRuntimes(ListRuntimesRequest) returns (ListRuntimesResponse);
+  rpc GetRuntime(GetRuntimeRequest) returns (RuntimeDevice);
+  rpc RegisterRuntime(RegisterRuntimeRequest) returns (RuntimeDevice);
+  rpc UpdateRuntime(UpdateRuntimeRequest) returns (RuntimeDevice);
+  rpc DeleteRuntime(DeleteRuntimeRequest) returns (Empty);
+  rpc PingRuntime(PingRuntimeRequest) returns (RuntimePing);
+  rpc ListRuntimePings(ListRuntimePingsRequest) returns (ListRuntimePingsResponse);
+  rpc ListRuntimeUsage(ListRuntimeUsageRequest) returns (ListRuntimeUsageResponse);
+  rpc GetIssueUsage(GetIssueUsageRequest) returns (IssueUsageSummary);
+  rpc ListRuntimeHourlyActivity(ListRuntimeHourlyActivityRequest) returns (ListRuntimeHourlyActivityResponse);
+  rpc TriggerRuntimeUpdate(TriggerRuntimeUpdateRequest) returns (RuntimeUpdate);
+}
+
+service DaemonService {
+  rpc RegisterDaemon(RegisterDaemonRequest) returns (RegisterDaemonResponse);
+  rpc DaemonHeartbeat(DaemonHeartbeatRequest) returns (Empty);
+}

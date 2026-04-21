@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS daemon_connections CASCADE;
+DROP TABLE IF EXISTS task_usage CASCADE;

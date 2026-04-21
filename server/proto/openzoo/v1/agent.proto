@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+
+// ── Agent ────────────────────────────────────────
+
+enum AgentStatus {
+  AGENT_STATUS_UNSPECIFIED = 0;
+  AGENT_STATUS_IDLE = 1;
+  AGENT_STATUS_WORKING = 2;
+  AGENT_STATUS_BLOCKED = 3;
+  AGENT_STATUS_ERROR = 4;
+  AGENT_STATUS_OFFLINE = 5;
+}
+
+enum AgentVisibility {
+  AGENT_VISIBILITY_UNSPECIFIED = 0;
+  AGENT_VISIBILITY_WORKSPACE = 1;
+  AGENT_VISIBILITY_PRIVATE = 2;
+}
+
+message Agent {
+  string id = 1;
+  string workspace_id = 2;
+  string runtime_id = 3;
+  string name = 4;
+  string description = 5;
+  string instructions = 6;
+  string avatar_url = 7;
+  AgentVisibility visibility = 8;
+  AgentStatus status = 9;
+  int32 max_concurrent_tasks = 10;
+  string owner_id = 11;
+  int64 created_at = 12;
+  int64 updated_at = 13;
+  int64 archived_at = 14;
+  repeated Skill skills = 15;
+}
+
+message Skill {
+  string id = 1;
+  string workspace_id = 2;
+  string name = 3;
+  string description = 4;
+  string content = 5;
+  string config_json = 6;
+  repeated SkillFile files = 7;
+  string created_by = 8;
+  int64 created_at = 9;
+  int64 updated_at = 10;
+}
+
+message SkillFile {
+  string id = 1;
+  string skill_id = 2;
+  string path = 3;
+  string content = 4;
+  int64 created_at = 5;
+  int64 updated_at = 6;
+}
+
+// ── Agent CRUD ───────────────────────────────────
+
+message ListAgentsRequest { string workspace_id = 1; }
+message ListAgentsResponse { repeated Agent agents = 1; }
+
+message GetAgentRequest { string workspace_id = 1; string agent_id = 2; }
+
+message CreateAgentRequest {
+  string workspace_id = 1;
+  string name = 2;
+  string description = 3;
+  string instructions = 4;
+  string avatar_url = 5;
+  string runtime_id = 6;
+  string runtime_config_json = 7;
+  AgentVisibility visibility = 8;
+  int32 max_concurrent_tasks = 9;
+}
+
+message UpdateAgentRequest {
+  string workspace_id = 1;
+  string agent_id = 2;
+  optional string name = 3;
+  optional string description = 4;
+  optional string instructions = 5;
+  optional string avatar_url = 6;
+  optional string runtime_id = 7;
+  optional string runtime_config_json = 8;
+  optional AgentVisibility visibility = 9;
+  optional AgentStatus status = 10;
+  optional int32 max_concurrent_tasks = 11;
+}
+
+message ArchiveAgentRequest { string workspace_id = 1; string agent_id = 2; }
+message RestoreAgentRequest { string workspace_id = 1; string agent_id = 2; }
+
+message SetAgentSkillsRequest {
+  string workspace_id = 1;
+  string agent_id = 2;
+  repeated string skill_ids = 3;
+}
+
+// ── Skills ───────────────────────────────────────
+
+message ListSkillsRequest { string workspace_id = 1; }
+message ListSkillsResponse { repeated Skill skills = 1; }
+
+message GetSkillRequest { string workspace_id = 1; string skill_id = 2; }
+
+message CreateSkillRequest {
+  string workspace_id = 1;
+  string name = 2;
+  string description = 3;
+  string content = 4;
+  string config_json = 5;
+  repeated SkillFileInput files = 6;
+}
+
+message SkillFileInput {
+  string path = 1;
+  string content = 2;
+}
+
+message UpdateSkillRequest {
+  string workspace_id = 1;
+  string skill_id = 2;
+  optional string name = 3;
+  optional string description = 4;
+  optional string content = 5;
+  optional string config_json = 6;
+  repeated SkillFileInput files = 7;
+}
+
+message DeleteSkillRequest { string workspace_id = 1; string skill_id = 2; }
+
+// ── Service ──────────────────────────────────────
+
+service AgentService {
+  rpc ListAgents(ListAgentsRequest) returns (ListAgentsResponse);
+  rpc GetAgent(GetAgentRequest) returns (Agent);
+  rpc CreateAgent(CreateAgentRequest) returns (Agent);
+  rpc UpdateAgent(UpdateAgentRequest) returns (Agent);
+  rpc ArchiveAgent(ArchiveAgentRequest) returns (Agent);
+  rpc RestoreAgent(RestoreAgentRequest) returns (Agent);
+  rpc SetAgentSkills(SetAgentSkillsRequest) returns (Agent);
+}
+
+service SkillService {
+  rpc ListSkills(ListSkillsRequest) returns (ListSkillsResponse);
+  rpc GetSkill(GetSkillRequest) returns (Skill);
+  rpc CreateSkill(CreateSkillRequest) returns (Skill);
+  rpc UpdateSkill(UpdateSkillRequest) returns (Skill);
+  rpc DeleteSkill(DeleteSkillRequest) returns (Empty);
+}

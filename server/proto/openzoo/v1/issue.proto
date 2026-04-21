@@ -1,0 +1,198 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+
+// ── Enums ────────────────────────────────────────
+
+enum IssueStatus {
+  ISSUE_STATUS_UNSPECIFIED = 0;
+  ISSUE_STATUS_BACKLOG = 1;
+  ISSUE_STATUS_TODO = 2;
+  ISSUE_STATUS_IN_PROGRESS = 3;
+  ISSUE_STATUS_IN_REVIEW = 4;
+  ISSUE_STATUS_DONE = 5;
+  ISSUE_STATUS_BLOCKED = 6;
+  ISSUE_STATUS_CANCELLED = 7;
+}
+
+enum IssuePriority {
+  ISSUE_PRIORITY_UNSPECIFIED = 0;
+  ISSUE_PRIORITY_NONE = 1;
+  ISSUE_PRIORITY_LOW = 2;
+  ISSUE_PRIORITY_MEDIUM = 3;
+  ISSUE_PRIORITY_HIGH = 4;
+  ISSUE_PRIORITY_URGENT = 5;
+}
+
+enum AssigneeType {
+  ASSIGNEE_TYPE_UNSPECIFIED = 0;
+  ASSIGNEE_TYPE_MEMBER = 1;
+  ASSIGNEE_TYPE_AGENT = 2;
+}
+
+// ── Issue ────────────────────────────────────────
+
+message IssueReaction {
+  string id = 1;
+  string issue_id = 2;
+  string actor_type = 3;
+  string actor_id = 4;
+  string emoji = 5;
+  int64 created_at = 6;
+}
+
+message Issue {
+  string id = 1;
+  string workspace_id = 2;
+  int32 number = 3;
+  string identifier = 4;
+  string title = 5;
+  string description = 6;
+  IssueStatus status = 7;
+  IssuePriority priority = 8;
+  AssigneeType assignee_type = 9;
+  string assignee_id = 10;
+  AssigneeType creator_type = 11;
+  string creator_id = 12;
+  string parent_issue_id = 13;
+  string project_id = 14;
+  double position = 15;
+  string due_date = 16;
+  repeated IssueReaction reactions = 17;
+  int64 created_at = 18;
+  int64 updated_at = 19;
+}
+
+// ── Issue CRUD ───────────────────────────────────
+
+message ListIssuesRequest {
+  string workspace_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+  IssueStatus status = 4;
+  IssuePriority priority = 5;
+  string assignee_id = 6;
+  string creator_id = 7;
+  bool open_only = 8;
+}
+
+message ListIssuesResponse {
+  repeated Issue issues = 1;
+  int32 total = 2;
+}
+
+message GetIssueRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+}
+
+message CreateIssueRequest {
+  string workspace_id = 1;
+  string title = 2;
+  string description = 3;
+  IssueStatus status = 4;
+  IssuePriority priority = 5;
+  AssigneeType assignee_type = 6;
+  string assignee_id = 7;
+  string parent_issue_id = 8;
+  string project_id = 9;
+  string due_date = 10;
+  repeated string attachment_ids = 11;
+}
+
+message UpdateIssueRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  optional string title = 3;
+  optional string description = 4;
+  optional IssueStatus status = 5;
+  optional IssuePriority priority = 6;
+  optional AssigneeType assignee_type = 7;
+  optional string assignee_id = 8;
+  optional double position = 9;
+  optional string due_date = 10;
+  optional string parent_issue_id = 11;
+  optional string project_id = 12;
+}
+
+message DeleteIssueRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+}
+
+message SearchIssuesRequest {
+  string workspace_id = 1;
+  string query = 2;
+  int32 limit = 3;
+}
+
+message SearchIssueResult {
+  Issue issue = 1;
+  string match_source = 2;
+  string matched_snippet = 3;
+}
+
+message SearchIssuesResponse {
+  repeated SearchIssueResult results = 1;
+  int32 total = 2;
+}
+
+// ── Issue Reactions ──────────────────────────────
+
+message AddIssueReactionRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  string emoji = 3;
+}
+
+message RemoveIssueReactionRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  string emoji = 3;
+}
+
+// ── Issue Subscribers ────────────────────────────
+
+enum SubscribeReason {
+  SUBSCRIBE_REASON_UNSPECIFIED = 0;
+  SUBSCRIBE_REASON_CREATOR = 1;
+  SUBSCRIBE_REASON_ASSIGNEE = 2;
+  SUBSCRIBE_REASON_COMMENTER = 3;
+  SUBSCRIBE_REASON_MENTIONED = 4;
+  SUBSCRIBE_REASON_MANUAL = 5;
+}
+
+message IssueSubscriber {
+  string issue_id = 1;
+  string user_type = 2;
+  string user_id = 3;
+  SubscribeReason reason = 4;
+  int64 created_at = 5;
+}
+
+message ListIssueSubscribersRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+}
+
+message ListIssueSubscribersResponse {
+  repeated IssueSubscriber subscribers = 1;
+}
+
+// ── Service ──────────────────────────────────────
+
+service IssueService {
+  rpc ListIssues(ListIssuesRequest) returns (ListIssuesResponse);
+  rpc GetIssue(GetIssueRequest) returns (Issue);
+  rpc CreateIssue(CreateIssueRequest) returns (Issue);
+  rpc UpdateIssue(UpdateIssueRequest) returns (Issue);
+  rpc DeleteIssue(DeleteIssueRequest) returns (Empty);
+  rpc SearchIssues(SearchIssuesRequest) returns (SearchIssuesResponse);
+  rpc AddIssueReaction(AddIssueReactionRequest) returns (IssueReaction);
+  rpc RemoveIssueReaction(RemoveIssueReactionRequest) returns (Empty);
+  rpc ListIssueSubscribers(ListIssueSubscribersRequest) returns (ListIssueSubscribersResponse);
+}

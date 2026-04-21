@@ -1,0 +1,15 @@
+{
+  "token_hmac_secret_key": "openzoo-token-secret",
+  "api_key": "openzoo-dev-key",
+  "admin": true,
+  "admin_password": "openzoo-admin",
+  "admin_secret": "openzoo-admin-secret",
+  "allowed_origins": ["*"],
+  "channel": {
+    "without_namespace": {
+      "presence": true,
+      "publish": true,
+      "subscribe_for_client": true
+    }
+  }
+}

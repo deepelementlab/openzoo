@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+import "openzoo/v1/issue.proto";
+
+// ── Inbox ────────────────────────────────────────
+
+enum InboxSeverity {
+  INBOX_SEVERITY_UNSPECIFIED = 0;
+  INBOX_SEVERITY_ACTION_REQUIRED = 1;
+  INBOX_SEVERITY_ATTENTION = 2;
+  INBOX_SEVERITY_INFO = 3;
+}
+
+enum InboxItemType {
+  INBOX_ITEM_TYPE_UNSPECIFIED = 0;
+  INBOX_ITEM_TYPE_ISSUE_ASSIGNED = 1;
+  INBOX_ITEM_TYPE_UNASSIGNED = 2;
+  INBOX_ITEM_TYPE_ASSIGNEE_CHANGED = 3;
+  INBOX_ITEM_TYPE_STATUS_CHANGED = 4;
+  INBOX_ITEM_TYPE_PRIORITY_CHANGED = 5;
+  INBOX_ITEM_TYPE_DUE_DATE_CHANGED = 6;
+  INBOX_ITEM_TYPE_NEW_COMMENT = 7;
+  INBOX_ITEM_TYPE_MENTIONED = 8;
+  INBOX_ITEM_TYPE_REVIEW_REQUESTED = 9;
+  INBOX_ITEM_TYPE_TASK_COMPLETED = 10;
+  INBOX_ITEM_TYPE_TASK_FAILED = 11;
+  INBOX_ITEM_TYPE_AGENT_BLOCKED = 12;
+  INBOX_ITEM_TYPE_AGENT_COMPLETED = 13;
+  INBOX_ITEM_TYPE_REACTION_ADDED = 14;
+}
+
+message InboxItem {
+  string id = 1;
+  string workspace_id = 2;
+  string recipient_type = 3;
+  string recipient_id = 4;
+  string actor_type = 5;
+  string actor_id = 6;
+  InboxItemType type = 7;
+  InboxSeverity severity = 8;
+  string issue_id = 9;
+  string title = 10;
+  string body = 11;
+  IssueStatus issue_status = 12;
+  bool read = 13;
+  bool archived = 14;
+  int64 created_at = 15;
+  string details_json = 16;
+}
+
+message ListInboxRequest {
+  string workspace_id = 1;
+  bool unread_only = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListInboxResponse {
+  repeated InboxItem items = 1;
+  int32 total = 2;
+  int32 unread_count = 3;
+}
+
+message MarkInboxReadRequest {
+  string workspace_id = 1;
+  repeated string item_ids = 2;
+}
+
+message MarkInboxArchivedRequest {
+  string workspace_id = 1;
+  repeated string item_ids = 2;
+}
+
+message MarkAllInboxReadRequest { string workspace_id = 1; }
+
+// ── Service ──────────────────────────────────────
+
+service InboxService {
+  rpc ListInbox(ListInboxRequest) returns (ListInboxResponse);
+  rpc MarkInboxRead(MarkInboxReadRequest) returns (Empty);
+  rpc MarkInboxArchived(MarkInboxArchivedRequest) returns (Empty);
+  rpc MarkAllInboxRead(MarkAllInboxReadRequest) returns (Empty);
+}

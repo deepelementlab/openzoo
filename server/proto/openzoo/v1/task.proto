@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+package openzoo.v1;
+
+option go_package = "github.com/openzoo-ai/openzoo/server/gen/openzoo/v1;openzoov1";
+
+import "openzoo/v1/platform.proto";
+
+// ── Task ─────────────────────────────────────────
+
+enum TaskStatus {
+  TASK_STATUS_UNSPECIFIED = 0;
+  TASK_STATUS_QUEUED = 1;
+  TASK_STATUS_DISPATCHED = 2;
+  TASK_STATUS_RUNNING = 3;
+  TASK_STATUS_COMPLETED = 4;
+  TASK_STATUS_FAILED = 5;
+  TASK_STATUS_CANCELLED = 6;
+}
+
+message Task {
+  string id = 1;
+  string agent_id = 2;
+  string runtime_id = 3;
+  string issue_id = 4;
+  TaskStatus status = 5;
+  int32 priority = 6;
+  int64 dispatched_at = 7;
+  int64 started_at = 8;
+  int64 completed_at = 9;
+  string result_json = 10;
+  string error = 11;
+  int64 created_at = 12;
+}
+
+// ── Task Messages (Agent output) ─────────────────
+
+enum TaskMessageType {
+  TASK_MESSAGE_TYPE_UNSPECIFIED = 0;
+  TASK_MESSAGE_TYPE_TEXT = 1;
+  TASK_MESSAGE_TYPE_THINKING = 2;
+  TASK_MESSAGE_TYPE_TOOL_USE = 3;
+  TASK_MESSAGE_TYPE_TOOL_RESULT = 4;
+  TASK_MESSAGE_TYPE_ERROR = 5;
+}
+
+message TaskMessage {
+  string id = 1;
+  string task_id = 2;
+  string issue_id = 3;
+  int32 seq = 4;
+  TaskMessageType type = 5;
+  string tool = 6;
+  string content = 7;
+  string input_json = 8;
+  string output = 9;
+  int64 created_at = 10;
+}
+
+// ── Task CRUD ────────────────────────────────────
+
+message CreateTaskRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  string runtime_id = 3;
+  string agent_id = 4;
+  string prompt = 5;
+}
+
+message GetTaskRequest { string workspace_id = 1; string task_id = 2; }
+
+message ListTasksRequest {
+  string workspace_id = 1;
+  string issue_id = 2;
+  string agent_id = 3;
+  TaskStatus status = 4;
+  int32 limit = 5;
+  int32 offset = 6;
+}
+
+message ListTasksResponse {
+  repeated Task tasks = 1;
+  int32 total = 2;
+}
+
+message UpdateTaskStatusRequest {
+  string workspace_id = 1;
+  string task_id = 2;
+  TaskStatus status = 3;
+  string error = 4;
+  string result_json = 5;
+}
+
+message CancelTaskRequest { string workspace_id = 1; string task_id = 2; }
+
+message ListTaskMessagesRequest {
+  string workspace_id = 1;
+  string task_id = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListTaskMessagesResponse { repeated TaskMessage messages = 1; }
+
+// ── Service ──────────────────────────────────────
+
+service TaskService {
+  rpc CreateTask(CreateTaskRequest) returns (Task);
+  rpc GetTask(GetTaskRequest) returns (Task);
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+  rpc UpdateTaskStatus(UpdateTaskStatusRequest) returns (Task);
+  rpc CancelTask(CancelTaskRequest) returns (Task);
+  rpc ListTaskMessages(ListTaskMessagesRequest) returns (ListTaskMessagesResponse);
+}
